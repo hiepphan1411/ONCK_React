@@ -14,11 +14,18 @@ function ProductList() {
     refetch,
   } = useFetch("https://67cd347add7651e464eda05a.mockapi.io/Products");
   const [deletingId, setDeletingId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const { showNotification } = useNotification();
   const { addToCart } = useCart();
 
   const dispatch = useDispatch();
+  
+  // Filter products based on search query
+  const filteredProducts = products ? products.filter(product => 
+    product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  ) : [];
+
   //Xử lý xóa bình thường
   // const handleDelete = async (id) => {
   //   try {
@@ -78,9 +85,28 @@ function ProductList() {
           Thêm sản phẩm mới
         </Link>
       </div>
+      
+      {/* Search bar */}
+      <div className="mb-6">
+        <div className="relative">
+          <div className="absolute inset-y-0 start-0 flex items-center pl-3 pointer-events-none">
+            <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+            </svg>
+          </div>
+          <input 
+            type="search" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="block w-full p-3 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+            placeholder="Tìm kiếm sản phẩm..."
+          />
+        </div>
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products &&
-          products.map((product) => (
+        {filteredProducts.length > 0 ?
+          filteredProducts.map((product) => (
             <div
               key={product.id}
               className="border rounded-lg overflow-hidden shadow-lg bg-white relative"
@@ -136,14 +162,13 @@ function ProductList() {
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="col-span-full text-center py-10 text-gray-500">
+              {searchQuery ? `Không tìm thấy sản phẩm nào với từ khóa "${searchQuery}"` : "Không có sản phẩm nào..."}
+            </div>
+          )
+        }
       </div>
-
-      {products && products.length === 0 && (
-        <div className="text-center py-10 text-gray-500">
-          Không có sản phẩm nào...
-        </div>
-      )}
     </div>
   );
 }

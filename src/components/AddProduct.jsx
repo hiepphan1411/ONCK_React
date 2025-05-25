@@ -9,6 +9,7 @@ function AddProduct() {
     title: "",
     price: "",
     description: "",
+    quantityType: "",
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -17,74 +18,75 @@ function AddProduct() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProduct({
-      ...product,
+    setProduct((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   //Hàm submit bình thường
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
+  //   const handleSubmit = async (e) => {
+  //     e.preventDefault();
 
-//     if (!product.name || !product.price) {
-//       showNotification("Vui lòng nhập đầy đủ thông tin!", "error");
-//       return;
-//     }
+  //     if (!product.name || !product.price) {
+  //       showNotification("Vui lòng nhập đầy đủ thông tin!", "error");
+  //       return;
+  //     }
 
-//     try {
-//       setLoading(true);
+  //     try {
+  //       setLoading(true);
 
-//       const response = await fetch(
-//         "https://67cd347add7651e464eda05a.mockapi.io/Products",
-//         {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify({
-//             ...product,
-//             price: parseFloat(product.price),
-//           }),
-//         }
-//       );
+  //       const response = await fetch(
+  //         "https://67cd347add7651e464eda05a.mockapi.io/Products",
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             ...product,
+  //             price: parseFloat(product.price),
+  //           }),
+  //         }
+  //       );
 
-//       if (!response.ok) {
-//         throw new Error("Failed to add product");
-//       }
+  //       if (!response.ok) {
+  //         throw new Error("Failed to add product");
+  //       }
 
-//       // Chuyển về trang chủ sau khi thêm
-//       navigate("/");
-//     } catch (error) {
-//       console.error("Error adding product:", error);
-//       alert("Không thể thêm sản phẩm, Vui lòng thử lại sau");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-    //Áp dụng redux toolkit
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if(!product.title || !product.price){
-            showNotification("Vui lòng nhập đầy đủ thông tin!", "error");
-            return;
-        }
-        try{
-            setLoading(true);
+  //       // Chuyển về trang chủ sau khi thêm
+  //       navigate("/");
+  //     } catch (error) {
+  //       console.error("Error adding product:", error);
+  //       alert("Không thể thêm sản phẩm, Vui lòng thử lại sau");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //Áp dụng redux toolkit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(product);
+    // if (!product.title || !product.price) {
+    //   showNotification("Vui lòng nhập đầy đủ thông tin!", "error");
+    //   return;
+    // }
+    // try {
+    //   setLoading(true);
 
-            await dispatch(
-                addNewProduct({
-                    ...product,
-                    price: parseFloat(product.price),
-                })
-            ).unwrap();
-            showNotification("Thêm sản phẩm thành công!", "success");
-            navigate("/");
-        }catch(err){
-            showNotification(err?.message || "Lỗi khi thêm", "error");
-            console.log(err);
-        }
-    }
+    //   await dispatch(
+    //     addNewProduct({
+    //       ...product,
+    //       price: parseFloat(product.price),
+    //     })
+    //   ).unwrap();
+    //   showNotification("Thêm sản phẩm thành công!", "success");
+    //   navigate("/");
+    // } catch (err) {
+    //   showNotification(err?.message || "Lỗi khi thêm", "error");
+    //   console.log(err);
+    // }
+  };
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6">Thêm sản phẩm mới</h2>
@@ -138,7 +140,26 @@ function AddProduct() {
             rows="4"
           />
         </div>
-
+        <div className="mb-4">
+          <label>
+            <input type="radio"
+                name="quantityType"
+                value="large"
+                checked = {product.quantityType === "large"}
+                onChange={handleChange}
+            ></input>
+            Số lượng lớn
+          </label>
+          <label>
+            <input type="radio" 
+              value="small"
+              name="quantityType"
+              checked= {product.quantityType === "small"}
+              onChange={handleChange}
+            />
+            Số lượng nhỏ
+          </label>
+        </div>
         <div className="flex justify-between">
           <button
             type="button"
